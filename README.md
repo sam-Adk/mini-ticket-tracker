@@ -1,4 +1,4 @@
-\# Mini Ticket Tracker
+\* Mini Ticket Tracker
 
 
 
@@ -6,7 +6,7 @@ A full-stack ticket management application built for the Lodwar Services develop
 
 
 
-\## Features
+\** Features
 
 
 
@@ -26,7 +26,7 @@ A full-stack ticket management application built for the Lodwar Services develop
 
 
 
-\## Technology Stack
+\** Technology Stack
 
 
 
