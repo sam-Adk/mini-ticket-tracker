@@ -60,7 +60,7 @@ A full-stack ticket management application built for the Lodwar Services develop
 
 ```bash
 
-git clone YOUR\_REPOSITORY\_URL
+git clone https://github.com/sam-Adk/mini-ticket-tracker
 
 cd mini-ticket-tracker
 
