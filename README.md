@@ -1,256 +1,260 @@
-\* Mini Ticket Tracker
+#  Mini Ticket Tracker
+
+### A simple, full-stack ticket management dashboard built with React, Express, and PostgreSQL.
+
+Manage support tickets from creation to resolution through a clean dashboard. Create tickets, track priorities, update statuses, filter results, and monitor ticket statistics—all backed by a REST API and PostgreSQL database.
 
 
 
-A full-stack ticket management application built for the Lodwar Services developer assessment. It allows users to create tickets, view and filter tickets, update ticket status and priority, and monitor ticket counts by status.
+---
 
+##  Features
 
+- ** Ticket management** — Create tickets with a title, description, and priority.
+- ** Status tracking** — Move tickets between `open`, `in_progress`, and `closed`.
+- ** Priority management** — Assign `low`, `medium`, or `high` priority.
+- ** Search and filtering** — Find tickets and filter the current listing by status.
+- ** Pagination** — Retrieve ticket records in manageable pages.
+- ** Dashboard statistics** — View ticket counts grouped by status.
+- ** Input validation** — Validate ticket data and return appropriate HTTP errors.
+- ** Automated tests** — Test key API workflows with Jest and Supertest.
+- ** Responsive interface** — Use the dashboard across desktop and smaller screens.
 
-\** Features
+##  Tech Stack
 
+| Layer | Technology |
+|---|---|
+| Frontend | React, Vite, CSS |
+| Backend | Node.js, Express |
+| Database | PostgreSQL |
+| Database driver | `pg` |
+| API testing | Jest, Supertest |
+| Development | npm, Nodemon |
 
+##  Project Structure
 
-\- Create tickets with a title, description, and priority.
-
-\- List tickets with status filtering and pagination.
-
-\- Update ticket status and priority.
-
-\- View ticket statistics grouped by status.
-
-\- Validate API inputs and return appropriate HTTP status codes.
-
-\- Store tickets in PostgreSQL.
-
-\- Run automated API integration tests.
-
-
-
-\** Technology Stack
-
-
-
-\- \*\*Frontend:\*\* React, Vite, CSS
-
-\- \*\*Backend:\*\* Node.js, Express
-
-\- \*\*Database:\*\* PostgreSQL
-
-\- \*\*Testing:\*\* Jest, Supertest
-
-
-
-\## Prerequisites
-
-
-
-\- Node.js and npm
-
-\- PostgreSQL
-
-
-
-\## Setup
-
-
-
-\### 1. Clone the repository
-
-
-
-```bash
-
-git clone https://github.com/sam-Adk/mini-ticket-tracker
-
-cd mini-ticket-tracker
-
+```text
+mini-ticket-tracker/
+├── backend/
+│   ├── db.js
+│   ├── server.js
+│   ├── server.test.js
+│   ├── package.json
+│   └── .env                 # Create locally; never commit
+├── frontend/
+│   ├── src/
+│   │   ├── App.jsx
+│   │   ├── App.css
+│   │   └── index.css
+│   ├── package.json
+│   └── vite.config.js
+├── DECISIONS.md
+├── README.md
+└── .gitignore
 ```
 
+##  Getting Started
 
+Follow these steps to run the application locally.
 
-\### 2. Configure the database
+### Prerequisites
 
+Install the following before you begin:
 
+- [Node.js and npm](https://nodejs.org/)
+- [PostgreSQL](https://www.postgresql.org/)
 
-Create a PostgreSQL database named `mini\_ticket\_tracker`.
+### 1. Clone the repository
 
+```bash
+git clone https://github.com/sam-Adk/mini-ticket-tracker.git
+cd mini-ticket-tracker
+```
 
+### 2. Create the database
 
-Create a `tickets` table with the following SQL:
-
-
+Open PostgreSQL using `psql` or a database client and create the database:
 
 ```sql
-
-CREATE TABLE tickets (
-
-&#x20;   id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-
-&#x20;   title VARCHAR(200) NOT NULL CHECK (length(trim(title)) > 0),
-
-&#x20;   description TEXT,
-
-&#x20;   status VARCHAR(20) NOT NULL DEFAULT 'open'
-
-&#x20;       CHECK (status IN ('open', 'in\_progress', 'closed')),
-
-&#x20;   priority VARCHAR(10) NOT NULL DEFAULT 'medium'
-
-&#x20;       CHECK (priority IN ('low', 'medium', 'high')),
-
-&#x20;   created\_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-
-);
-
+CREATE DATABASE mini_ticket_tracker;
 ```
 
+Connect to `mini_ticket_tracker`, then create the tickets table:
 
+```sql
+CREATE TABLE tickets (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    title VARCHAR(200) NOT NULL
+        CHECK (length(trim(title)) > 0),
+    description TEXT,
+    status VARCHAR(20) NOT NULL DEFAULT 'open'
+        CHECK (status IN ('open', 'in_progress', 'closed')),
+    priority VARCHAR(10) NOT NULL DEFAULT 'medium'
+        CHECK (priority IN ('low', 'medium', 'high')),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+```
 
-\### 3. Configure the backend
+### 3. Configure and start the backend
 
-
-
-Open the `backend` directory and create a `.env` file using your own local PostgreSQL credentials:
-
-
+Create a file named `.env` inside the `backend` directory:
 
 ```env
-
-DB\_USER=postgres
-
-DB\_HOST=127.0.0.1
-
-DB\_NAME=mini\_ticket\_tracker
-
-DB\_PASSWORD=your\_local\_postgres\_password
-
-DB\_PORT=5432
-
+DB_USER=postgres
+DB_HOST=127.0.0.1
+DB_NAME=mini_ticket_tracker
+DB_PASSWORD=your_local_postgres_password
+DB_PORT=5432
 PORT=3000
-
 ```
 
+Replace `your_local_postgres_password` with your own PostgreSQL password. Do not commit this file.
 
-
-Install dependencies and start the API:
-
-
+Install the backend dependencies and start the API:
 
 ```bash
-
 cd backend
-
 npm install
-
 npm run dev
-
 ```
 
+The API should now be available at:
 
+**http://localhost:3000**
 
-The API runs at `http://localhost:3000`.
+You can check the health endpoint at `http://localhost:3000/`.
 
+### 4. Start the frontend
 
-
-\### 4. Configure the frontend
-
-
-
-In a second terminal:
-
-
+Keep the backend running. Open a **second terminal** in the project root and run:
 
 ```bash
-
 cd frontend
-
 npm install
-
 npm run dev
-
 ```
 
+Open the local URL printed by Vite, usually `http://localhost:5173`.
 
+The frontend connects to the API at `http://localhost:3000`.
 
-Open the local URL displayed by Vite in your browser.
+##  API Reference
 
-
-
-\## API Endpoints
-
-
+Base URL: `http://localhost:3000`
 
 | Method | Endpoint | Description |
-
 |---|---|---|
+| `GET` | `/` | Check API health |
+| `POST` | `/tickets` | Create a ticket |
+| `GET` | `/tickets` | List tickets with optional filtering and pagination |
+| `PATCH` | `/tickets/:id` | Update a ticket's status or priority |
+| `GET` | `/tickets/stats` | Get ticket counts grouped by status |
 
-| GET | `/` | API health check |
+### Query parameters
 
-| POST | `/tickets` | Create a ticket |
+The ticket listing endpoint supports:
 
-| GET | `/tickets` | List tickets with optional status filtering and pagination |
+| Parameter | Description |
+|---|---|
+| `status` | Optional status filter: `open`, `in_progress`, or `closed` |
+| `page` | Page number; defaults to `1` |
+| `limit` | Page size; defaults to `10`, with a maximum of `100` |
 
-| PATCH | `/tickets/:id` | Update ticket status or priority |
+Example request:
 
-| GET | `/tickets/stats` | Get counts grouped by status |
+```http
+GET /tickets?status=open&page=1&limit=10
+```
 
+### Example: Create a ticket
 
+**Request**
 
-\### Example ticket
-
-
+```http
+POST /tickets
+Content-Type: application/json
+```
 
 ```json
-
 {
-
-&#x20; "title": "Investigate login issue",
-
-&#x20; "description": "Users report intermittent login failures",
-
-&#x20; "priority": "high"
-
+  "title": "Investigate login issue",
+  "description": "Users report intermittent login failures",
+  "priority": "high"
 }
-
 ```
 
+The API creates the ticket with `open` status by default and returns the created record.
 
+### Example: Update a ticket
 
-Valid statuses: `open`, `in\_progress`, `closed`.
+```http
+PATCH /tickets/1
+Content-Type: application/json
+```
 
+```json
+{
+  "status": "in_progress",
+  "priority": "high"
+}
+```
 
+### Example: Ticket statistics
 
-Valid priorities: `low`, `medium`, `high`.
+```http
+GET /tickets/stats
+```
 
+Example response:
 
+```json
+{
+  "open": 4,
+  "in_progress": 2,
+  "closed": 7
+}
+```
 
-\## Testing
+The numbers above are illustrative; actual counts depend on the database contents.
 
+##  Running Tests
 
+The backend includes automated API integration tests covering health checks, validation, ticket creation, filtering, pagination, status updates, and statistics.
 
-Run the automated backend integration tests:
-
-
+From the `backend` directory, run:
 
 ```bash
-
-cd backend
-
 npm test
-
 ```
 
+The current test suite contains six tests.
 
+##  Security and Data Integrity
 
-The tests cover API health, input validation, ticket creation, filtering and pagination, status updates, and status statistics.
+- Database queries use parameterized SQL.
+- API inputs are validated before processing.
+- Database constraints enforce valid statuses, priorities, and non-empty ticket titles.
+- Credentials are supplied through environment variables.
+- `.env`, dependency folders, and generated files are excluded through Git ignore rules.
 
+##  Technical Decisions
 
+See [`DECISIONS.md`](DECISIONS.md) for the reasoning behind the technology choices, validation strategy, pagination, testing approach, and scope trade-offs.
 
-\## Security and Configuration
+##  Author
 
+**Samuel Adikah**
 
+- GitHub: [@sam-Adk](https://github.com/sam-Adk)
+- LinkedIn: [Samuel Adikah](https://www.linkedin.com/in/samuel-adikah-50a3a132a/)
+- Portfolio: [View my portfolio](https://samuel-portfolio-react.onrender.com)
 
-Database credentials are stored in a local environment file and should not be committed to version control. API database queries use parameterized SQL, and the API validates incoming ticket data.
+---
+
+<p align="center">
+  Built with React, Express, and PostgreSQL.
+</p>
+
 
 
 
